@@ -1,15 +1,16 @@
 pipeline {
     agent any
 
-    // Define parameters
     parameters {
         choice(name: 'BRANCH', choices: ['main', 'development', 'feature'], description: 'Select the branch to build')
     }
 
     environment {
-        CI = 'false' // Treat warnings as warnings, not errors
+        CI = 'false'
         repourl = 'https://github.com/abhi0201src/youtube.git'
-        DOCKER_IMAGE = 'abhi0201/youtube' // Base Docker image name
+        DOCKER_IMAGE = 'abhi0201/youtube'
+        EC2_HOST = 'ec2-3-83-47-202.compute-1.amazonaws.com'
+        EC2_USER = 'jenkins-agent'
     }
 
     stages {
@@ -20,17 +21,12 @@ pipeline {
             }
         }
 
-        stage('Verify') {
-            steps {
-                echo 'Verifying'
-                sh 'whoami'
-            }
-        }
-
         stage('Login to Docker') {
             steps {
                 echo 'Logging in to Docker'
-                sh 'docker login'
+                withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh "echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin"
+                }
             }
         }
 
@@ -38,10 +34,8 @@ pipeline {
             steps {
                 echo 'Building Dockerfile'
                 script {
-                    // Append build number to the Docker image tag
                     def imageTag = "${env.DOCKER_IMAGE}:1.0.${env.BUILD_NUMBER}"
                     sh "docker build -t ${imageTag} ."
-                    // Store the image tag for later stages
                     env.DOCKER_IMAGE_TAG = imageTag
                 }
             }
@@ -54,27 +48,26 @@ pipeline {
             }
         }
 
-        stage('Stop and Remove Existing Container') {
+        stage('Deploy to EC2') {
             steps {
-                echo 'Stopping and removing existing container on port 3000'
-                script {
-                    // Check if a container is running on port 3000
-                    def runningContainerId = sh(script: "docker ps -q --filter 'publish=3000'", returnStdout: true).trim()
-                    if (runningContainerId) {
-                        echo "Stopping and removing container: ${runningContainerId}"
-                        sh "docker stop ${runningContainerId}"
-                        sh "docker rm ${runningContainerId}"
-                    } else {
-                        echo "No container is running on port 3000"
+                sshagent(['aws']) {
+                    script {
+                        // SSH into EC2 and execute Docker commands
+                        def remoteCommands = """
+                            echo 'Pulling Docker image from Docker Hub'
+                            docker pull ${env.DOCKER_IMAGE_TAG}
+                            
+                            echo 'Stopping and removing existing container on port 3000'
+                            docker ps -q --filter publish=3000 | xargs -r docker stop
+                            docker ps -aq --filter publish=3000 | xargs -r docker rm
+                            
+                            echo 'Running new Docker container'
+                            docker run -d -p 3000:3000 ${env.DOCKER_IMAGE_TAG}
+                        """
+                        
+                        sh "ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} '${remoteCommands}'"
                     }
                 }
-            }
-        }
-
-        stage('Run Docker Image') {
-            steps {
-                echo 'Running Docker image'
-                sh "docker run -d -p 3000:3000 ${env.DOCKER_IMAGE_TAG}"
             }
         }
     }
