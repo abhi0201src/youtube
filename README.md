@@ -11,11 +11,16 @@ Node.js (if developing locally)
 
 # Application Structure
 youtube/
-├── public/          # Static files
-├── src/             # Application source code
-├── Dockerfile       # Docker configuration
-├── package.json     # Node.js dependencies
-└── README.md        # This file
+
+public/          # Static files
+
+src/             # Application source code
+
+Dockerfile       # Docker configuration
+
+package.json     # Node.js dependencies
+
+README.md        # This file
 
 # AWS EC2 Deployment
 a. Launch an EC2 Instance
