@@ -24,6 +24,7 @@ README.md        # This file
 
 # AWS EC2 Deployment
 a. Launch an EC2 Instance
+
 Use Amazon Linux 2 or Ubuntu AMI
 Ensure security group allows:
 HTTP (port 80)
@@ -33,15 +34,23 @@ Minimum recommended: t2.micro instance
 
 b. Connect to Your EC2 Instance
 bash
+
 ssh -i "your-key.pem" ec2-user@your-ec2-public-dns
+
 c. Install Docker on EC2
+
 d. Deploy Your Application
-bash
+
 # On EC2 instance:
+
 git clone https://github.com/abhi0201src/youtube.git
+
 cd youtube
+
 docker build -t youtube-app .
+
 docker run -p 80:3000 -d youtube-app
+
  Access via Web Browser
 Simply enter one of these in your browser's address bar:
 
