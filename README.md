@@ -49,4 +49,4 @@ docker run -p 80:3000 -d youtube-app
  Access via Web Browser
 Simply enter one of these in your browser's address bar:
 
-http://<your-public-ip>
+http://<your-public-dns>
