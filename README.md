@@ -5,12 +5,12 @@ This repository contains a JavaScript-based YouTube application packaged as a Do
 Prerequisites
 Before you begin, ensure you have the following installed:
 - **Docker**
-- **AWS CLI (configured with your credentials)
+- **AWS CLI (configured with your credentials)**
 - **Git**
 - **Node.js (if developing locally)**
 
 ## Application Structure
-youtube\
+youtube
 
 public           # Static files
 
@@ -38,6 +38,7 @@ SSH (port 22)
 Minimum recommended: t2.micro instance
 
 **b. Connect to Your EC2 Instance**
+
 bash
 ```
 ssh -i "your-key.pem" ec2-user@your-ec2-public-dns
