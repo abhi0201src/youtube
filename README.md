@@ -26,10 +26,15 @@ README.md        # This file
 a. Launch an EC2 Instance
 
 Use Amazon Linux 2 or Ubuntu AMI
+
 Ensure security group allows:
+
 HTTP (port 80)
+
 HTTPS (port 443)
+
 SSH (port 22)
+
 Minimum recommended: t2.micro instance
 
 b. Connect to Your EC2 Instance
