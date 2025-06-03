@@ -4,16 +4,12 @@ This repository contains a JavaScript-based YouTube application packaged as a Do
 
 Prerequisites
 Before you begin, ensure you have the following installed:
-
 Docker
-
 AWS CLI (configured with your credentials)
-
 Git
-
 Node.js (if developing locally)
 
-Application Structure
+# Application Structure
 youtube/
 ├── public/          # Static files
 ├── src/             # Application source code
@@ -21,18 +17,13 @@ youtube/
 ├── package.json     # Node.js dependencies
 └── README.md        # This file
 
-AWS EC2 Deployment
+# AWS EC2 Deployment
 a. Launch an EC2 Instance
 Use Amazon Linux 2 or Ubuntu AMI
-
 Ensure security group allows:
-
 HTTP (port 80)
-
 HTTPS (port 443)
-
 SSH (port 22)
-
 Minimum recommended: t2.micro instance
 
 b. Connect to Your EC2 Instance
